@@ -10,9 +10,9 @@ class Title extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.openSans(
-        color: Color(0xff3c4858),
-        fontSize: 20,
+      style: GoogleFonts.montserrat(
+        color: Color(0xdd222222),
+        fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
     );

@@ -34,39 +34,46 @@ class DashStatistics extends StatelessWidget {
   Widget allStats() {
     return Row(
       mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[stats(), stats(), stats(), stats()],
-    );
-  }
-
-  Widget stats() {
-    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        deltaText("103"),
-        currentCount("3211"),
-        caption("Confirmed"),
+        stats("Confirmed", Colors.yellow[800]),
+        stats("Active", Colors.blue),
+        stats("Recovered", Colors.green[700]),
+        stats("Death", Colors.red),
       ],
     );
   }
 
-  Widget deltaText(String text) {
-    return Text(
-      "[+$text]",
-      style: GoogleFonts.openSans(fontSize: 14, fontWeight: FontWeight.bold),
+  Widget stats(String captionStr, Color color) {
+    return Column(
+      children: <Widget>[
+        deltaText("103", color),
+        currentCount("3211", color),
+        caption(captionStr),
+      ],
     );
   }
 
-  Widget currentCount(String text) {
+  Widget deltaText(String text, Color color) {
+    return Text(
+      "[+$text]",
+      style: GoogleFonts.openSans(
+          fontSize: 12, fontWeight: FontWeight.bold, color: color),
+    );
+  }
+
+  Widget currentCount(String text, Color color) {
     return Text(
       text,
-      style: GoogleFonts.openSans(fontSize: 24, fontWeight: FontWeight.bold),
+      style: GoogleFonts.openSans(
+          fontSize: 20, fontWeight: FontWeight.bold, color: color),
     );
   }
 
   Widget caption(String text) {
     return Text(
       text,
-      style: GoogleFonts.openSans(fontSize: 14, fontWeight: FontWeight.normal),
+      style: GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.normal),
     );
   }
 }

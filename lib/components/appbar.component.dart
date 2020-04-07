@@ -7,7 +7,7 @@ class CustomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return new AppBar(
       leading: Icon(Icons.menu, color: Colors.black),
-      title: Title("COVID 19 TRACKER IND"),
+      title: Title("COVID 19 INDIA TRACKER"),
       backgroundColor: Color(0xfff5f5f5),
       elevation: 12,
       actions: <Widget>[

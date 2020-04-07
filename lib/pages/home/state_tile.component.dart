@@ -6,22 +6,34 @@ import 'package:google_fonts/google_fonts.dart';
 class StateWiseTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-      child: GestureDetector(
-        onTap: () {
-          print("on tap clicked");
-        },
-        child: Row(
-          children: <Widget>[
-            stateIcon(),
-            SizedBox(width: 18),
-            stateName(),
-            SizedBox(width: 18),
-            todayIncrement()
-          ],
+    return Column(
+      children: <Widget>[
+        InkWell(
+          onTap: () {
+            print("on tap clicked");
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(25, 5, 25, 7),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+//                stateIcon(),
+//                SizedBox(width: 18),
+                    stateName(),
+                    SizedBox(width: 18),
+                    todayIncrement(),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+          child: Divider(),
+        ),
+      ],
     );
   }
 
@@ -56,14 +68,18 @@ class StateWiseTile extends StatelessWidget {
   Widget currentText(String text) {
     return Text(
       text,
-      style: GoogleFonts.openSans(fontSize: 18, fontWeight: FontWeight.bold),
+      style: GoogleFonts.openSans(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Color.fromARGB(175, 0, 0, 0),
+      ),
     );
   }
 
-  Widget captionText(String text){
+  Widget captionText(String text) {
     return Text(
       text,
-      style: GoogleFonts.openSans(fontSize: 14, fontWeight: FontWeight.w600),
+      style: GoogleFonts.openSans(fontSize: 14, fontWeight: FontWeight.normal),
     );
   }
 }
