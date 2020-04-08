@@ -7,10 +7,11 @@ import 'package:http/http.dart';
 
 class HttpService {
   Future<Statistic> getData() async {
+    print("calling internet to get data");
     Statistic statistic = await _getNationAndStateWideData();
     List<DistrictWiseRes> dres = await _getDistrictWideData(statistic);
     fillStateAndDistrictData(statistic, dres);
-    await Future.delayed(Duration(seconds: 10), () => print("delayed"));
+//    await Future.delayed(Duration(seconds: 10), () => print("delayed"));
     return statistic;
   }
 

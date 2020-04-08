@@ -8,27 +8,43 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../components/appbar.component.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     HttpService().getData();
-    return Scaffold(appBar: CustomAppBar().build(context), body: body(context));
+    return Scaffold(
+        appBar: CustomAppBar(
+          callback: () {
+            setState(() {});
+          },
+        ).build(context),
+        body: body(context));
   }
 
   Widget body(BuildContext context) {
     return FutureBuilder(
-      future: HttpService().getData(),
+      future: HttpService().getData().timeout(Duration(seconds: 10)),
       builder: (BuildContext context, AsyncSnapshot<Statistic> snapshot) {
+        print(snapshot.hasError);
         if (snapshot.hasData) {
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[
 //          indiaImage(context),
                 SizedBox(height: 20),
-                DashStatistics(),
-                stateWiseTileBody()
+                DashStatistics(snapshot.data),
+                stateWiseTileBody(snapshot.data)
               ],
             ),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text("Something went wrong. I am unable to get data"),
           );
         } else {
           return Center(child: CircularProgressIndicator());
@@ -50,11 +66,11 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget stateWiseTileBody() {
+  Widget stateWiseTileBody(Statistic statistic) {
     return Column(
       children: <Widget>[
         stateWiseHeaderRow(),
-        stateWiseTileList(),
+        stateWiseTileList(statistic.subStatistics),
       ],
     );
   }
@@ -77,10 +93,19 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget stateWiseTileList() {
+  Widget stateWiseTileList(List<Statistic> states) {
     List<Widget> tiles = List();
-    for (int ii = 0; ii < 20; ii++) {
-      tiles.add(StateWiseTile());
+    for (Statistic state in states) {
+      if (state.currentCaseData.confirmed != 0)
+        tiles.add(StateWiseTile(
+          stats: state,
+          enableNav: true,
+        ));
+    }
+    if (tiles.length == 0) {
+      print("**********************************");
+      print("**********************************");
+      print("**********************************");
     }
     return Column(
       children: tiles,
