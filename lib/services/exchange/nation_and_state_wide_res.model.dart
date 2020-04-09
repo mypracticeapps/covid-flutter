@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:covid/model/case_data.dart';
 import 'package:covid/model/statistic.model.dart';
 
 NationAndStateWideRes nationAndStateWideResFromJson(String str) => NationAndStateWideRes.fromJson(json.decode(str));
@@ -18,15 +17,15 @@ class NationAndStateWideRes {
     this.tested,
   });
 
-  Statistic toStatistics() {
-    List<Statistic> stats = this.statewise.map((st) => st.toStatistics()).toList();
-    Statistic india = stats.firstWhere((st) => st.code == "TT");
-    stats.remove(india);
+  IndiaStatistics toStatistics() {
+    List<StateStatistics> stats = this.statewise.map((st) => st.toStatistics()).toList();
+    Statistic indSt = stats.firstWhere((st) => st.code == "TT");
+    stats.remove(indSt);
 
-    india.name = "India";
-    india.code = "IN";
-    india.regionType = RegionType.COUNTRY;
-    india.subStatistics = stats;
+    IndiaStatistics india = IndiaStatistics(name: "India", code: "IN", regionType: RegionType.COUNTRY);
+    india.currentCaseData = indSt.currentCaseData;
+    india.deltaCaseData = indSt.deltaCaseData;
+    india.states = stats;
     return india;
   }
 
@@ -108,8 +107,8 @@ class Statewise {
     this.statecode,
   });
 
-  Statistic toStatistics() {
-    Statistic statistic = Statistic(name: this.state, code: this.statecode, regionType: RegionType.STATE);
+  StateStatistics toStatistics() {
+    Statistic statistic = StateStatistics(name: this.state, code: this.statecode, regionType: RegionType.STATE);
     CaseData currentCD = CaseData();
     currentCD.confirmed = int.parse(this.confirmed);
     currentCD.active = int.parse(this.active);

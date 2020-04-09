@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
       future: HttpService().getData().timeout(Duration(seconds: 10)),
       builder: (BuildContext context, AsyncSnapshot<MapEntry> snapshot) {
         if (snapshot.hasData) {
-          Statistic statistic = snapshot.data.key;
+          IndiaStatistics statistic = snapshot.data.key;
           String indSvg = snapshot.data.value;
           return SingleChildScrollView(
             child: Column(
@@ -66,11 +66,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget stateWiseTileBody(Statistic statistic) {
+  Widget stateWiseTileBody(IndiaStatistics statistic) {
     return Column(
       children: <Widget>[
         stateWiseHeaderRow(),
-        stateWiseTileList(statistic.subStatistics),
+        stateWiseTileList(statistic.states),
       ],
     );
   }
@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget stateWiseTileList(List<Statistic> states) {
+  Widget stateWiseTileList(List<StateStatistics> states) {
     List<Widget> tiles = List();
     states.sort((a, b) => b.currentCaseData.confirmed - a.currentCaseData.confirmed);
     for (Statistic state in states) {

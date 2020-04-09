@@ -1,10 +1,5 @@
-// To parse this JSON data, do
-//
-//     final districtWiseRes = districtWiseResFromJson(jsonString);
-
 import 'dart:convert';
 
-import 'package:covid/model/case_data.dart';
 import 'package:covid/model/statistic.model.dart';
 
 List<DistrictWiseRes> districtWiseResFromJson(String str) =>
@@ -13,8 +8,8 @@ List<DistrictWiseRes> districtWiseResFromJson(String str) =>
 String districtWiseResToJson(List<DistrictWiseRes> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-void fillStateAndDistrictData(Statistic ind, List<DistrictWiseRes> distList) {
-  distList.forEach((dt) => dt.fillStatistic(ind.subStatistics));
+void fillStateAndDistrictData(IndiaStatistics india, List<DistrictWiseRes> distList) {
+  distList.forEach((dt) => dt.fillStatistic(india.states));
 }
 
 class DistrictWiseRes {
@@ -26,14 +21,14 @@ class DistrictWiseRes {
     this.districtData,
   });
 
-  void fillStatistic(List<Statistic> states) {
-    Statistic state = states.firstWhere((st) => st.name == this.state, orElse: () {
+  void fillStatistic(List<StateStatistics> states) {
+    StateStatistics state = states.firstWhere((st) => st.name == this.state, orElse: () {
       print("Not found");
       return null;
     });
     if (state == null) return;
-    List<Statistic> stats = this.districtData.map((dt) => dt.toStatistic()).toList();
-    state.subStatistics = stats;
+    List<DistrictStatistics> stats = this.districtData.map((dt) => dt.toStatistic()).toList();
+    state.districts = stats;
   }
 
   factory DistrictWiseRes.fromJson(Map<String, dynamic> json) => DistrictWiseRes(
@@ -60,8 +55,8 @@ class DistrictDatum {
     this.delta,
   });
 
-  Statistic toStatistic() {
-    Statistic statistic = Statistic(name: district, code: "NA", regionType: RegionType.DISTRICT);
+  DistrictStatistics toStatistic() {
+    DistrictStatistics statistic = DistrictStatistics(name: district, code: "NA", regionType: RegionType.DISTRICT);
     CaseData current = CaseData();
     current.confirmed = this.confirmed;
     statistic.currentCaseData = current;

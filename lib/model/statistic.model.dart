@@ -1,4 +1,3 @@
-import 'package:covid/model/case_data.dart';
 import 'package:flutter/cupertino.dart';
 
 class Statistic {
@@ -13,12 +12,43 @@ class Statistic {
   CaseData currentCaseData;
   CaseData deltaCaseData;
 
-  List<Statistic> subStatistics;
-
   @override
   String toString() {
-    return 'Statistic{name: $name, code: $code, regionType: $regionType, date: $date, currentCaseData: $currentCaseData, deltaCaseData: $deltaCaseData, subStatistics: $subStatistics}';
+    return 'Statistic{name: $name, code: $code, regionType: $regionType, date: $date, currentCaseData: $currentCaseData, deltaCaseData: $deltaCaseData}';
   }
 }
 
+class CaseData {
+  int confirmed;
+  int active;
+  int recovered;
+  int death;
+
+  CaseData() {
+    this.confirmed = 0;
+    this.active = 0;
+    this.recovered = 0;
+    this.death = 0;
+  }
+}
+
+
 enum RegionType { COUNTRY, STATE, DISTRICT }
+
+class IndiaStatistics extends Statistic {
+  List<StateStatistics> states;
+  IndiaStatistics(
+      {@required String name, @required String code, @required RegionType regionType}): super(name:name, code:code, regionType:regionType);
+
+}
+
+class StateStatistics extends Statistic {
+  List<DistrictStatistics> districts;
+  StateStatistics(
+      {@required String name, @required String code, @required RegionType regionType}): super(name:name, code:code, regionType:regionType);
+}
+
+class DistrictStatistics extends Statistic {
+  DistrictStatistics(
+      {@required String name, @required String code, @required RegionType regionType}): super(name:name, code:code, regionType:regionType);
+}

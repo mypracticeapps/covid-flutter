@@ -23,11 +23,11 @@ class TextPage extends StatelessWidget {
     );
   }
 
-  Widget stateWiseTileBody(Statistic statistic) {
+  Widget stateWiseTileBody(StateStatistics statistic) {
     return Column(
       children: <Widget>[
         stateWiseHeaderRow(),
-        stateWiseTileList(statistic.subStatistics),
+        stateWiseTileList(statistic.districts),
       ],
     );
   }
@@ -50,11 +50,11 @@ class TextPage extends StatelessWidget {
     );
   }
 
-  Widget stateWiseTileList(List<Statistic> dists) {
+  Widget stateWiseTileList(List<DistrictStatistics> dists) {
     List<Widget> tiles = List();
     dists.sort((a, b) => b.currentCaseData.confirmed - a.currentCaseData.confirmed);
 
-    for (Statistic dist in dists) {
+    for (DistrictStatistics dist in dists) {
       if (dist.currentCaseData.confirmed != 0)
         tiles.add(StateWiseTile(
           stats: dist,
