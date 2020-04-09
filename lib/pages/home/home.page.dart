@@ -29,16 +29,17 @@ class _HomePageState extends State<HomePage> {
   Widget body(BuildContext context) {
     return FutureBuilder(
       future: HttpService().getData().timeout(Duration(seconds: 10)),
-      builder: (BuildContext context, AsyncSnapshot<Statistic> snapshot) {
-        print(snapshot.hasError);
+      builder: (BuildContext context, AsyncSnapshot<MapEntry> snapshot) {
         if (snapshot.hasData) {
+          Statistic statistic = snapshot.data.key;
+          String indSvg = snapshot.data.value;
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[
-//          indiaImage(context),
+                indiaImage(context, indSvg),
                 SizedBox(height: 20),
-                DashStatistics(snapshot.data),
-                stateWiseTileBody(snapshot.data)
+                DashStatistics(statistic),
+                stateWiseTileBody(statistic)
               ],
             ),
           );
@@ -53,15 +54,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget indiaImage(BuildContext context) {
-    String asset = "assets/svgs/placeholder.svg";
+  Widget indiaImage(BuildContext context, String indSvg) {
     return Container(
       padding: EdgeInsets.all(30),
       height: 450,
       width: MediaQuery.of(context).size.width,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: FittedBox(child: SvgPicture.asset(asset, semanticsLabel: 'Acme Logo')),
+        child: FittedBox(child: SvgPicture.string(indSvg, semanticsLabel: 'Acme Logo')),
       ),
     );
   }
@@ -95,17 +95,13 @@ class _HomePageState extends State<HomePage> {
 
   Widget stateWiseTileList(List<Statistic> states) {
     List<Widget> tiles = List();
+    states.sort((a, b) => b.currentCaseData.confirmed - a.currentCaseData.confirmed);
     for (Statistic state in states) {
       if (state.currentCaseData.confirmed != 0)
         tiles.add(StateWiseTile(
           stats: state,
           enableNav: true,
         ));
-    }
-    if (tiles.length == 0) {
-      print("**********************************");
-      print("**********************************");
-      print("**********************************");
     }
     return Column(
       children: tiles,

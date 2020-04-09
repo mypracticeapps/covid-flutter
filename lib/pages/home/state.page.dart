@@ -52,6 +52,8 @@ class TextPage extends StatelessWidget {
 
   Widget stateWiseTileList(List<Statistic> dists) {
     List<Widget> tiles = List();
+    dists.sort((a, b) => b.currentCaseData.confirmed - a.currentCaseData.confirmed);
+
     for (Statistic dist in dists) {
       if (dist.currentCaseData.confirmed != 0)
         tiles.add(StateWiseTile(
