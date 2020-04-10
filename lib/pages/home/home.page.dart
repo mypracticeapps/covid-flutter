@@ -1,3 +1,4 @@
+import 'package:covid/MyScreenSize.dart';
 import 'package:covid/model/statistic.model.dart';
 import 'package:covid/services/http_service.dart';
 import 'package:covid/style/text.components.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart' hide Title;
 import 'package:covid/components/dash_statistics.component.dart';
 import 'package:covid/pages/home/state_tile.component.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../components/appbar.component.dart';
 
@@ -14,55 +16,107 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  IndiaStatistics indiaStatistics;
+  String svgImage;
+  bool error = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    HttpService().getData().timeout(Duration(seconds: 20)).then((me) {
+      setState(() {
+        indiaStatistics = me.key;
+        svgImage = me.value;
+        print("complete data");
+      });
+    }, onError: (error) {
+      this.error = true;
+    });
+  }
+
+  _HomePageState();
+
   @override
   Widget build(BuildContext context) {
-    HttpService().getData();
     return Scaffold(
         appBar: CustomAppBar(
           callback: () {
             setState(() {});
           },
         ).build(context),
-        body: body(context));
+        body: HomePageBody(
+          indiaStatistics: indiaStatistics,
+          svgImage: svgImage,
+          error: error,
+        ));
+  }
+}
+
+class HomePageBody extends StatelessWidget {
+  IndiaStatistics indiaStatistics;
+  String svgImage;
+  bool error;
+
+  HomePageBody({this.indiaStatistics, this.svgImage, this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    MyScreenSize.init(context);
+    return myBody();
   }
 
-  Widget body(BuildContext context) {
-    return FutureBuilder(
-      future: HttpService().getData().timeout(Duration(seconds: 10)),
-      builder: (BuildContext context, AsyncSnapshot<MapEntry> snapshot) {
-        if (snapshot.hasData) {
-          IndiaStatistics statistic = snapshot.data.key;
-          String indSvg = snapshot.data.value;
-          return SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                indiaImage(context, indSvg),
-                SizedBox(height: 20),
-                DashStatistics(statistic),
-                stateWiseTileBody(statistic)
-              ],
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text("Something went wrong. I am unable to get data"),
-          );
-        } else {
-          return Center(child: CircularProgressIndicator());
-        }
+  Widget myBody() {
+    if (error == true) {
+      return errorScreen();
+    } else if (indiaStatistics == null) {
+      return loading();
+    } else {
+      return loaded();
+    }
+  }
+
+  Widget loading() {
+    return Center(child: CircularProgressIndicator());
+  }
+
+  Widget errorScreen() {
+    return Center(
+      child: Text("Something went wrong. I am unable to get data"),
+    );
+  }
+
+  Widget loaded() {
+    return SlidingUpPanel(
+      minHeight: MyScreenSize.height * 0.3,
+      maxHeight: MyScreenSize.height,
+      body: myIndiaImage(svgImage),
+      panelBuilder: (ScrollController sc) {
+        return SingleChildScrollView(
+          controller: sc,
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 20),
+              DashStatistics(indiaStatistics),
+              stateWiseTileBody(indiaStatistics)
+            ],
+          ),
+        );
       },
     );
   }
 
-  Widget indiaImage(BuildContext context, String indSvg) {
-    return Container(
-      padding: EdgeInsets.all(30),
-      height: 450,
-      width: MediaQuery.of(context).size.width,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: FittedBox(child: SvgPicture.string(indSvg, semanticsLabel: 'Acme Logo')),
-      ),
+  Widget myIndiaImage(String indSvg) {
+    return Column(
+      children: <Widget>[
+        Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.fromLTRB(15, 25,15,0),
+          height: MyScreenSize.height * 0.6,
+          width: double.infinity,
+          child: SvgPicture.string(indSvg, semanticsLabel: 'INDIA SVG'),
+        )
+      ],
     );
   }
 

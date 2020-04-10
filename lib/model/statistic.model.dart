@@ -6,8 +6,7 @@ class Statistic {
   RegionType regionType;
   DateTime date = DateTime.now();
 
-  Statistic(
-      {@required this.name, @required this.code, @required this.regionType});
+  Statistic({@required this.name, @required this.code, @required this.regionType});
 
   CaseData currentCaseData;
   CaseData deltaCaseData;
@@ -32,23 +31,33 @@ class CaseData {
   }
 }
 
-
 enum RegionType { COUNTRY, STATE, DISTRICT }
 
 class IndiaStatistics extends Statistic {
   List<StateStatistics> states;
-  IndiaStatistics(
-      {@required String name, @required String code, @required RegionType regionType}): super(name:name, code:code, regionType:regionType);
 
+  IndiaStatistics({@required String name, @required String code, @required RegionType regionType})
+      : super(name: name, code: code, regionType: regionType);
+
+  StateStatistics findState({String code}) {
+    for (StateStatistics state in states) {
+      if (state.code == code) {
+        return state;
+      }
+    }
+
+    throw "Unable to find the given state. code: $code";
+  }
 }
 
 class StateStatistics extends Statistic {
   List<DistrictStatistics> districts;
-  StateStatistics(
-      {@required String name, @required String code, @required RegionType regionType}): super(name:name, code:code, regionType:regionType);
+
+  StateStatistics({@required String name, @required String code, @required RegionType regionType})
+      : super(name: name, code: code, regionType: regionType);
 }
 
 class DistrictStatistics extends Statistic {
-  DistrictStatistics(
-      {@required String name, @required String code, @required RegionType regionType}): super(name:name, code:code, regionType:regionType);
+  DistrictStatistics({@required String name, @required String code, @required RegionType regionType})
+      : super(name: name, code: code, regionType: regionType);
 }

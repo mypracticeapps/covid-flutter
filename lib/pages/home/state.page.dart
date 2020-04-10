@@ -59,6 +59,7 @@ class TextPage extends StatelessWidget {
         tiles.add(StateWiseTile(
           stats: dist,
           enableNav: false,
+          enableToday: false,
         ));
     }
     return Column(

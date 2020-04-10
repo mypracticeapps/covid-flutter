@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:covid/maps/MySvgBuilder.dart';
 import 'package:covid/model/statistic.model.dart';
 import 'package:covid/services/exchange/district_wise.model.dart';
 import 'package:covid/services/exchange/nation_and_state_wide_res.model.dart';
-import 'package:covid/services/map.service.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 
@@ -12,17 +12,28 @@ import 'package:xml/xml_events.dart' as xml_events;
 
 class HttpService {
   Future<MapEntry> getData() async {
-    String test = await rootBundle.loadString('assets/svgs/india3.svg');
-    test = test.replaceAll("INAPFILL", "red");
-
-    test = await MapService().indiaMap();
-
     print("calling internet to get data");
-    Statistic statistic = await _getNationAndStateWideData();
+    IndiaStatistics statistic = await _getNationAndStateWideData();
     List<DistrictWiseRes> dres = await _getDistrictWideData(statistic);
     fillStateAndDistrictData(statistic, dres);
-//    await Future.delayed(Duration(seconds: 10), () => print("delayed"));
-    return MapEntry(statistic, test);
+
+    // merge jk and la. after remove la.
+    StateStatistics jk = statistic.states.firstWhere((st)=>st.code == "IN-JK");
+    StateStatistics la = statistic.states.firstWhere((st)=>st.code == "IN-LA");
+    statistic.states.remove(la);
+
+    jk.currentCaseData.confirmed += la.currentCaseData.confirmed;
+    jk.currentCaseData.active += la.currentCaseData.active;
+    jk.currentCaseData.recovered += la.currentCaseData.recovered;
+    jk.currentCaseData.death += la.currentCaseData.death;
+    jk.deltaCaseData.confirmed += la.deltaCaseData.confirmed;
+    jk.deltaCaseData.active += la.deltaCaseData.active;
+    jk.deltaCaseData.recovered += la.deltaCaseData.recovered;
+    jk.deltaCaseData.death += la.deltaCaseData.death;
+    jk.districts.addAll(la.districts);
+
+    String image = await MySvgBuilder(india:statistic).build();
+    return MapEntry(statistic, image);
   }
 
   Future<Statistic> _getNationAndStateWideData() async {
@@ -32,7 +43,7 @@ class HttpService {
       if (response.statusCode == 200) {
         Map<String, dynamic> body = jsonDecode(response.body);
         NationAndStateWideRes res = NationAndStateWideRes.fromJson(body);
-        Statistic statistic = res.toStatistics();
+        IndiaStatistics statistic = res.toStatistics();
         return statistic;
       } else {
         throw "cannot get nation and state wise data";

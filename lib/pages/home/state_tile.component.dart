@@ -8,14 +8,15 @@ import 'package:google_fonts/google_fonts.dart';
 class StateWiseTile extends StatelessWidget {
   Statistic stats;
   bool enableNav;
+  bool enableToday;
 
-  StateWiseTile({this.stats, this.enableNav:true});
+  StateWiseTile({this.stats, this.enableNav: true, this.enableToday = true});
 
   @override
   Widget build(BuildContext context) {
-    if(this.enableNav){
+    if (this.enableNav) {
       return clickableTile(context);
-    }else {
+    } else {
       return nonClickableTile(context);
     }
   }
@@ -106,7 +107,13 @@ class StateWiseTile extends StatelessWidget {
   }
 
   Widget todayIncrement() {
-    return Column(children: <Widget>[currentText("${stats.deltaCaseData.confirmed}"), captionText("Today")]);
+    if (this.enableToday) {
+      return Column(children: <Widget>[currentText("${stats.deltaCaseData.confirmed}"), captionText("Today")]);
+    } else {
+      return SizedBox(
+        width: 1,
+      );
+    }
   }
 
   Widget currentText(String text) {

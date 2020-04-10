@@ -19,7 +19,7 @@ class NationAndStateWideRes {
 
   IndiaStatistics toStatistics() {
     List<StateStatistics> stats = this.statewise.map((st) => st.toStatistics()).toList();
-    Statistic indSt = stats.firstWhere((st) => st.code == "TT");
+    Statistic indSt = stats.firstWhere((st) => st.code == "IN-TT");
     stats.remove(indSt);
 
     IndiaStatistics india = IndiaStatistics(name: "India", code: "IN", regionType: RegionType.COUNTRY);
@@ -108,7 +108,8 @@ class Statewise {
   });
 
   StateStatistics toStatistics() {
-    Statistic statistic = StateStatistics(name: this.state, code: this.statecode, regionType: RegionType.STATE);
+    String code = "IN-${this.statecode}";
+    Statistic statistic = StateStatistics(name: this.state, code: code, regionType: RegionType.STATE);
     CaseData currentCD = CaseData();
     currentCD.confirmed = int.parse(this.confirmed);
     currentCD.active = int.parse(this.active);
